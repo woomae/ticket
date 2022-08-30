@@ -48,7 +48,7 @@ while True:
 sleep(1)
 # 예매하기 눌러서 새창이 뜨면 포커스를 새롭게 열린탭으로 변경
 driver.switch_to.window(driver.window_handles[-1])
-print("1.예매페이지에서 연 팡까지 이동완료")
+print("1.예매페이지에서 예매탭까지 이동완료")
 while True:
     try:
         seatiframe = driver.find_element(By.CSS_SELECTOR, "#ifrmSeat")
@@ -72,7 +72,7 @@ reader = easyocr.Reader(['en'])
 # 캡쳐한 이미지에서 문자열 인식하기
 result = reader.readtext(captcha.screenshot_as_png, detail=0)
 #문자열 인식오류 제거
-result = result[0].replace(' ', '').replace('5', 'S').replace('0', 'O').replace('$', 'S').replace(',', '').replace(':', '').replace('.', '').replace('+', 'T').replace("'", '').replace('`', '').replace('1', 'L').replace('e', 'Q').replace('3', 'S').replace('€', 'C').replace('{', '').replace('-', '').replace('@','O')
+result = result[0].replace('s', 'S').replace('c', 'C').replace(' ', '').replace('z', 'Z').replace('8', 'B').replace('5', 'S').replace('0', 'O').replace('$', 'S').replace(',', '').replace(':', '').replace('.', '').replace('+', 'T').replace("'", '').replace('`', '').replace('1', 'L').replace('e', 'Q').replace('3', 'S').replace('€', 'C').replace('{', '').replace('-', '').replace('@','O').replace('p', 'D')
 # 입력할 텍스트박스 클릭하기.
 driver.find_element(By.CLASS_NAME,'validationTxt').click()
 # 추출된 문자열 텍스트박스에 입력하기.
@@ -83,13 +83,13 @@ chapchaText.send_keys(result)
 chapchaText.send_keys(Keys.ENTER)
 print("3.captcha인증완료")
 
-# 날짜 아이프레임
-dateiframe = driver.find_element(By.CSS_SELECTOR, "#ifrmBookStep")
-driver.switch_to.frame(dateiframe)
+#관람일자선택
+select1 = Select(driver.find_element(By.CSS_SELECTOR,"#PlayDate"))
+select1.select_by_value("20220904")#날짜입력
 
-select = Select(driver.find_element_by_xpath('셀렉트박스XPATH'))
-select.select_by_value('선택할 값')
-print(year, month)
+select2 = Select(driver.find_element(By.ID,"PlaySeq"))
+select2.select_by_value("002")#시간입력(확인필요!!, 날짜에 따라 value값이 달라짐)
 
+#좌석선택
 
 # driver.quit()
