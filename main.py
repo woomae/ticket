@@ -7,6 +7,8 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import Select
 
+
+
 # Options= webdriver.ChromeOptions()
 # user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
 # Options.add_argument('user-agent='+user_agent)
@@ -24,7 +26,7 @@ userPwd.send_keys('gudrms0!') # 로그인 할 계정의 패스워드
 userPwd.send_keys(Keys.ENTER)
 
 # 원하는 티켓의 상세페이지의 링크를 가져옴(URL의 마지막숫자는 상세페이지에 있는 도메인)
-driver.get('http://ticket.interpark.com/Ticket/Goods/GoodsInfo.asp?GoodsCode='+'22009541')
+driver.get('http://ticket.interpark.com/Ticket/Goods/GoodsInfo.asp?GoodsCode='+'22007717')
 sleep(1)
 # 태그가 없으면 에러발생
 def check_exists_by_element(by, name):
@@ -89,10 +91,10 @@ if checktime!=5:
 
 #관람일자선택
 select1 = Select(driver.find_element(By.CSS_SELECTOR,"#PlayDate"))
-select1.select_by_value("20220904")#날짜입력
+select1.select_by_value("20221001")#날짜입력
 sleep(1)
 select2 = Select(driver.find_element(By.ID,"PlaySeq"))
-select2.select_by_value("002")#시간입력(확인필요!!, 날짜에 따라 value값이 달라짐)
+select2.select_by_value("001")#시간입력(확인필요!!, 날짜에 따라 value값이 달라짐)
 
 #좌석선택
 def seat_title_checking1(level, block, seat):
@@ -111,10 +113,23 @@ def seat_title_checking5(level, block, seat):
     return "[title*='" + level + "석'][title*='-" + chr(64 + seat) + "열']"
 
 # 좌석 선택 iframe
-driver.switch_to.frame(driver.find_element(By.XPATH, "//*[@id='ifrmSeatDetail']"))
-sleep(1)
+while True:
+    try:
+        driver.switch_to.frame(driver.find_element(By.XPATH, "//*[@id='ifrmSeatDetail']"))
+    except:
+        continue
+    else:
+        break
+sleep(3)#미니맵이있는경우 3초안에 클릭
 # 활성화 되어 있는 좌석의 class 속성 stySeat 
-seat_check = driver.find_element(By.CLASS_NAME, "stySeat")
+try:
+    seat_check = driver.find_element(By.CLASS_NAME, "stySeat")
+except:
+    c_name ="e"
+    seat_check = driver.find_element(By.CLASS_NAME, "SeatN")
+else:
+    print("좌석을 찾을 수 없습니다.")
+
 seat_title = seat_check.get_attribute('title')
 b = seat_title.split('-')
 
@@ -149,8 +164,11 @@ while seat < 20:
     # level : VIP, R, A  등 좌석의 등급
     # block : A, B, C 등 좌석의 구역을 설정
     # seat : 숫자 또는 영어. 열을 지정
-    seat_string = zone_seat_return('R', 'P', seat)
-    imgs = driver.find_elements(By.CSS_SELECTOR, "img.stySeat" + seat_string)
+    seat_string = zone_seat_return('S', 'A5', 14)#level,block,seat
+    if c_name=="e":
+        imgs = driver.find_elements(By.CSS_SELECTOR, "span.SeatN" + seat_string)
+    else:
+        imgs = driver.find_elements(By.CSS_SELECTOR, "img.stySeat" + seat_string)
 
     for i in imgs:
         i.click()
