@@ -8,7 +8,11 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import Select
 
 
-def mainrun():
+
+
+
+def mainrun(dic):
+    #id, pw, ln, day, time, level, block, seat
         
     # Options= webdriver.ChromeOptions()
     # user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
@@ -21,13 +25,13 @@ def mainrun():
 
     driver.switch_to.frame(driver.find_element(By.XPATH, "//div[@class='leftLoginBox']/iframe[@title='login']"))
     userId = driver.find_element(By.ID, 'userId')
-    userId.send_keys('chg01111') # 로그인 할 계정 id
+    userId.send_keys(dic["id"]) # 로그인 할 계정 id
     userPwd = driver.find_element(By.ID, 'userPwd')
-    userPwd.send_keys('gudrms0!') # 로그인 할 계정의 패스워드
+    userPwd.send_keys(dic["pw"]) # 로그인 할 계정의 패스워드
     userPwd.send_keys(Keys.ENTER)
 
     # 원하는 티켓의 상세페이지의 링크를 가져옴(URL의 마지막숫자는 상세페이지에 있는 도메인)
-    driver.get('http://ticket.interpark.com/Ticket/Goods/GoodsInfo.asp?GoodsCode='+'22007717')
+    driver.get('http://ticket.interpark.com/Ticket/Goods/GoodsInfo.asp?GoodsCode='+dic["ln"])
     sleep(1)
     # 태그가 없으면 에러발생
     def check_exists_by_element(by, name):
@@ -92,10 +96,10 @@ def mainrun():
 
     #관람일자선택
     select1 = Select(driver.find_element(By.CSS_SELECTOR,"#PlayDate"))
-    select1.select_by_value("20221001")#날짜입력
+    select1.select_by_value(dic["day"])#날짜입력
     sleep(1)
     select2 = Select(driver.find_element(By.ID,"PlaySeq"))
-    select2.select_by_value("001")#시간입력(확인필요!!, 날짜에 따라 value값이 달라짐)
+    select2.select_by_value(dic["time"])#시간입력(확인필요!!, 날짜에 따라 value값이 달라짐)
 
     #좌석선택
     def seat_title_checking1(level, block, seat):
@@ -165,7 +169,7 @@ def mainrun():
         # level : VIP, R, A  등 좌석의 등급
         # block : A, B, C 등 좌석의 구역을 설정
         # seat : 숫자 또는 영어. 열을 지정
-        seat_string = zone_seat_return('S', 'A5', 14)#level,block,seat
+        seat_string = zone_seat_return(dic["level"], dic["block"], dic["seat"])#level,block,seat
         if c_name=="e":
             imgs = driver.find_elements(By.CSS_SELECTOR, "span.SeatN" + seat_string)
         else:
@@ -187,5 +191,7 @@ def mainrun():
     # 다음 버튼 클릭
     driver.find_element(By.XPATH, "//div[@class='seatR']/div[@class='inner']/div[@class='btnWrap']/a/img").click()
 
-    driver.quit()
+    while(True):
+        sleep(100)
+    # driver.quit()
 
