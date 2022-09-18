@@ -9,8 +9,6 @@ from selenium.webdriver.support.ui import Select
 
 
 
-
-
 def mainrun(dic):
     #id, pw, ln, day, time, level, block, seat
         
@@ -20,8 +18,12 @@ def mainrun(dic):
 
     driver = webdriver.Chrome('./chromedriver.exe')
     # 사이즈조절
-    driver.set_window_size(1400, 1000)  # (가로, 세로)
-    driver.get('https://ticket.interpark.com/Gate/TPLogin.asp') # 페이지 이동
+    driver.set_window_size(1600, 1100)  # (가로, 세로)
+    #목표시간 받아오기
+    now = dic["start"].split(':')
+    
+    
+    driver.get('https://ticket.interpark.com/Gate/TPLogin.asp') # 인터파크 페이지 이동
 
     driver.switch_to.frame(driver.find_element(By.XPATH, "//div[@class='leftLoginBox']/iframe[@title='login']"))
     userId = driver.find_element(By.ID, 'userId')
@@ -29,6 +31,21 @@ def mainrun(dic):
     userPwd = driver.find_element(By.ID, 'userPwd')
     userPwd.send_keys(dic["pw"]) # 로그인 할 계정의 패스워드
     userPwd.send_keys(Keys.ENTER)
+    
+    #서버시간받아오기
+    driver.execute_script('window.open("https://time.navyism.com/?host=ticket.interpark.com");')
+    sleep(3)
+    
+    
+    # while True:
+    #     servertime = driver.find_element(By.XPATH,'//*[@id="time_area"]').text.split('일')
+    #     servertime = servertime[1].split()
+    #     print(servertime, now)
+    #     if servertime ==now:
+    #         driver.close()
+    #         break
+    #     else:
+    #         sleep(0.1)
 
     # 원하는 티켓의 상세페이지의 링크를 가져옴(URL의 마지막숫자는 상세페이지에 있는 도메인)
     driver.get('http://ticket.interpark.com/Ticket/Goods/GoodsInfo.asp?GoodsCode='+dic["ln"])
@@ -178,7 +195,7 @@ def mainrun(dic):
         for i in imgs:
             i.click()
             cnt = cnt + 1
-            if cnt == int(4):# 인원
+            if cnt == int(2):# 인원
                 w_check = True
                 break
 
